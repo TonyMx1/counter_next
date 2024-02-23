@@ -1,3 +1,4 @@
+import 'package:counter_next/pages/pass_forgot.dart';
 import 'package:flutter/material.dart';
 
 class LoginPage extends StatefulWidget {
@@ -179,23 +180,31 @@ class _RememberState extends State<Remember> {
     return Row(
       children: [
         Checkbox(
-            value: ischecked,
-            onChanged: (value) => {
-                  setState(() => ischecked == false
-                      ? ischecked = true
-                      : ischecked = false),
-                }),
+          value: ischecked,
+          onChanged: (value) {
+            setState(() {
+              ischecked = value ?? true;
+            });
+          },
+        ),
         const Text(
-          'Recuerdame',
+          'Recuérdame',
           style: TextStyle(fontSize: 12),
         ),
         const Spacer(),
         TextButton(
-            onPressed: () => {},
-            child: const Text(
-              '¿Olvido su contraseña?',
-              style: TextStyle(fontSize: 12),
-            )),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const ForgotPasswordPage()),
+            );
+          },
+          child: const Text(
+            '¿Olvidó su contraseña?',
+            style: TextStyle(fontSize: 12),
+          ),
+        ),
       ],
     );
   }
