@@ -1,16 +1,32 @@
 import 'package:flutter/material.dart';
 
-class ForgotPasswordPage extends StatelessWidget {
-  const ForgotPasswordPage({Key? key}) : super(key: key);
+class ForgotPassword extends StatelessWidget {
+  const ForgotPassword({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Recuperar Contraseña'),
+        backgroundColor: Colors.blue,
+        elevation: 0,
+        title: const Text(
+          'Restaurar contraseña',
+          style: TextStyle(color: Colors.white),
+        ),
       ),
-      body: const Center(
-        child: Text('Aquí puedes recuperar tu contraseña'),
+      body: Container(
+        color: Colors.white,
+        child: const Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                'Restaurar contraseña',
+                style: TextStyle(fontSize: 20),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

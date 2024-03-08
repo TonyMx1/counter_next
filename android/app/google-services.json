@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "770023908940",
+    "project_id": "logincounter-next",
+    "storage_bucket": "logincounter-next.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:770023908940:android:d49d681d2b48cca1b9b6e9",
+        "android_client_info": {
+          "package_name": "com.example.counter_next"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBYeZ0JJePZE_Xjg3IuIh06MG2ARLDgvkA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,5 +1,47 @@
-import 'package:counter_next/pages/pass_forgot.dart';
+import 'package:counter_next/pages/home_page.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:counter_next/pages/pass_forgot.dart';
+
+final TextEditingController _emailController = TextEditingController();
+final TextEditingController _passwordController = TextEditingController();
+
+Future<void> registerWithEmailAndPassword(String email, String password) async {
+  try {
+    final credential =
+        await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
+  } on FirebaseAuthException catch (e) {
+    if (e.code == 'weak-password') {
+      //print('The password provided is too weak.');
+    } else if (e.code == 'email-already-in-use') {
+      //print('The account already exists for that email.');
+    }
+  } catch (e) {
+    //print(e);
+  }
+}
+
+Future<void> signInWithEmailAndPassword(
+    String email, String password, BuildContext context) async {
+  try {
+    final credential = await FirebaseAuth.instance
+        .signInWithEmailAndPassword(email: email, password: password);
+    // ignore: use_build_context_synchronously
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const HomePage()),
+    );
+  } on FirebaseAuthException catch (e) {
+    if (e.code == 'user-not-found') {
+      // print('No user found for that email.');
+    } else if (e.code == 'wrong-password') {
+      // print('Wrong password provided for that user.');
+    }
+  }
+}
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -92,7 +134,7 @@ class Datos extends StatefulWidget {
 }
 
 class _DatosState extends State<Datos> {
-  bool showPassword = true;
+  bool showPass = true;
 
   @override
   Widget build(BuildContext context) {
@@ -117,6 +159,7 @@ class _DatosState extends State<Datos> {
             height: 5,
           ),
           TextFormField(
+            controller: _emailController,
             keyboardType: TextInputType.emailAddress,
             decoration: const InputDecoration(
               border: OutlineInputBorder(),
@@ -138,7 +181,8 @@ class _DatosState extends State<Datos> {
             height: 5,
           ),
           TextFormField(
-            obscureText: showPassword,
+            controller: _passwordController,
+            obscureText: showPass,
             decoration: InputDecoration(
               border: const OutlineInputBorder(),
               hintText: 'Contraseña',
@@ -146,9 +190,7 @@ class _DatosState extends State<Datos> {
                 icon: const Icon(Icons.remove_red_eye_outlined),
                 onPressed: () => {
                   setState(() {
-                    showPassword == true
-                        ? showPassword = true
-                        : showPassword = false;
+                    showPass = !showPass;
                   }),
                 },
               ),
@@ -158,7 +200,7 @@ class _DatosState extends State<Datos> {
           const SizedBox(
             height: 30,
           ),
-          Botones(),
+          const Botones(),
         ],
       ),
     );
@@ -175,36 +217,35 @@ class Remember extends StatefulWidget {
 class _RememberState extends State<Remember> {
   bool ischecked = true;
 
+  void forgotPassword() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const ForgotPassword()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
         Checkbox(
-          value: ischecked,
-          onChanged: (value) {
-            setState(() {
-              ischecked = value ?? true;
-            });
-          },
-        ),
+            value: ischecked,
+            onChanged: (value) => {
+                  setState(() => ischecked == false
+                      ? ischecked = true
+                      : ischecked = false),
+                }),
         const Text(
-          'Recuérdame',
+          'Recuerdame',
           style: TextStyle(fontSize: 12),
         ),
         const Spacer(),
         TextButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => const ForgotPasswordPage()),
-            );
-          },
-          child: const Text(
-            '¿Olvidó su contraseña?',
-            style: TextStyle(fontSize: 12),
-          ),
-        ),
+            onPressed: forgotPassword,
+            child: const Text(
+              '¿Olvido su contraseña?',
+              style: TextStyle(fontSize: 12),
+            )),
       ],
     );
   }
@@ -221,7 +262,10 @@ class Botones extends StatelessWidget {
           width: double.infinity,
           height: 50,
           child: ElevatedButton(
-            onPressed: () => {},
+            onPressed: () {
+              signInWithEmailAndPassword(
+                  _emailController.text, _passwordController.text, context);
+            },
             style: ButtonStyle(
               backgroundColor: MaterialStateProperty.all<Color>(
                 const Color(0xff142047),
@@ -236,22 +280,32 @@ class Botones extends StatelessWidget {
           width: double.infinity,
         ),
         const Text(
-          'O entra con',
-          style: TextStyle(color: Colors.grey),
+          "Ingresa con",
+          style: TextStyle(
+            color: Colors.grey,
+          ),
+        ),
+        const SizedBox(
+          height: 25,
+          width: double.infinity,
         ),
         SizedBox(
           width: double.infinity,
           height: 50,
           child: OutlinedButton(
-              onPressed: () => {},
-              child: const Text(
-                'Gugul',
-                style: TextStyle(
-                  color: Color(0xff142047),
-                  fontWeight: FontWeight.bold,
-                  fontSize: 15,
-                ),
-              )),
+            onPressed: () {
+              registerWithEmailAndPassword(
+                  _emailController.text, _passwordController.text);
+            },
+            child: const Text(
+              'Google',
+              style: TextStyle(
+                color: Color(0xff142047),
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
+              ),
+            ),
+          ),
         ),
         const SizedBox(
           height: 15,
@@ -261,19 +315,16 @@ class Botones extends StatelessWidget {
           width: double.infinity,
           height: 50,
           child: OutlinedButton(
-              onPressed: () => {},
-              child: const Text(
-                'Feisbuk',
-                style: TextStyle(
-                  color: Color(0xff142047),
-                  fontWeight: FontWeight.bold,
-                  fontSize: 15,
-                ),
-              )),
-        ),
-        const SizedBox(
-          height: 15,
-          width: double.infinity,
+            onPressed: () => {},
+            child: const Text(
+              'Facebook',
+              style: TextStyle(
+                color: Color(0xff142047),
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
+              ),
+            ),
+          ),
         ),
       ],
     );
@@ -288,11 +339,13 @@ class Privacidad extends StatelessWidget {
     return Center(
       child: TextButton(
         onPressed: () => {},
-        child: const Text('Poitica de privacidad',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 12,
-            )),
+        child: const Text(
+          'Politica de privacidad',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 12,
+          ),
+        ),
       ),
     );
   }
